@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 34px;
+      margin: 0;
+      color: #5c4033; /* Capybara brown */
+    }
+    .industry-select {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .industry-select label {
+      font-size: 16px;
+      color: #5c4033;
+    }
+    select {
+      font-size: 16px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #333;
+    }
+    .company-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .company-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .company-logo {
+      width: 100px;
+      height: auto;
+      margin-right: 20px;
+      border-radius: 8px;
+    }
+    .company-info {
+      flex-grow: 1;
+    }
+    .company-name {
+      font-size: 22px;
+      margin: 10px 0;
+      color: #5c4033;
+    }
+    .company-description {
+      margin: 10px 0;
+      color: #7f8c8d;
+    }
+    .company-website a, .company-contact a {
+      color: #8e735b; /* Capybara accent */
+      text-decoration: none;
+      transition: color 0.2s ease-in-out;
+    }
+    .company-website a:hover, .company-contact a:hover {
+      color: #5c4033;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Potential Business Collaboration Partners</h1>
+  </div>
+  <div class="industry-select">
+    <label for="industry">Select an Industry: </label>
+    <select id="industry" onchange="filterCompanies()">
+      <option value="" disabled selected>-- Select Industry --</option>
+      <option value="Technology">Technology</option>
+      <option value="Healthcare">Healthcare</option>
+      <option value="Finance">Finance</option>
+      <option value="Education">Education</option>
+      <option value="Retail">Retail</option>
+    </select>
+  </div>
+  <div id="companies"></div>
+  <script>
+    function createCompanyCard(company) {
+      return `
+        <div class="company-card">
+          <img class="company-logo" src="${company.logo}" alt="${company.name} Logo">
+          <div class="company-info">
+            <div class="company-name">${company.name}</div>
+            <div class="company-description">${company.description}</div>
+            <div class="company-website"><a href="${company.website}" target="_blank">${company.website}</a></div>
+            <div class="company-contact">Contact: <a href="mailto:${company.contact}">${company.contact}</a></div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function displayCompanies(companies) {
+      const companiesContainer = document.getElementById('companies');
+      companiesContainer.innerHTML = '';
+      companies.forEach(company => {
+        companiesContainer.innerHTML += createCompanyCard(company);
+      });
+    }
+
+    function filterCompanies() {
+      const selectedIndustry = document.getElementById('industry').value;
+      if (selectedIndustry) {
+        google.script.run.withSuccessHandler(displayCompanies).getCompaniesByIndustry(selectedIndustry);
+      } else {
+        document.getElementById('companies').innerHTML = '';
+      }
+    }
+  </script>
+</body>
+</html>
