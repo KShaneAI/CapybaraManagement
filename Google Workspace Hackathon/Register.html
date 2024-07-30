@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5; /* Light Gray Background */
+        color: #4A4A4A; /* Dark Gray Text */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      h1 {
+        color: #8B4513; /* Capybara Brown */
+        margin-bottom: 20px;
+      }
+      form {
+        background-color: #ffffff; /* White Background for Form */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+      input, select {
+        margin: 10px 0;
+        padding: 12px;
+        width: calc(100% - 24px);
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #8B4513; /* Capybara Brown */
+        border: none;
+        color: white;
+        padding: 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 25px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+      button:hover {
+        background-color: #5A3311; /* Darker Brown */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      #response {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #ff4d4d;
+      }
+      #response.success {
+        color: #28a745;
+      }
+    </style>
+    <script>
+      function registerUser() {
+        var data = {
+          businessId: document.getElementById('businessId').value,
+          password: document.getElementById('password').value,
+          businessName: document.getElementById('businessName').value,
+          businessEmail: document.getElementById('businessEmail').value,
+          businessIndustry: document.getElementById('businessIndustry').value,
+          service1: document.getElementById('service1').value,
+          service2: document.getElementById('service2').value,
+          service3: document.getElementById('service3').value
+        };
+        
+        // Client-side validation
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(data.businessEmail)) {
+          document.getElementById('response').innerText = 'Invalid email format';
+          return;
+        }
+        
+        google.script.run.withSuccessHandler(function(response) {
+          document.getElementById('response').innerText = response;
+          if (response === 'Registration Successful') {
+            document.getElementById('response').classList.add('success');
+            document.getElementById('redirectLink').href = 'https://script.google.com/macros/s/AKfycbxOW0sfLZt4mSuDfmiw4Gj6_rg0GlmHmAmlJSNCjX5EUVIWl4EWY8ZYPAcUq7jPAjCW/exec?page=welcome';
+            setTimeout(function() {
+              document.getElementById('redirectLink').click();
+            }, 2000); // Redirect after 2 seconds
+          } else {
+            document.getElementById('response').classList.remove('success');
+          }
+        }).registerUser(data);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Register</h1>
+    <form id="registerForm">
+      <input type="text" id="businessId" placeholder="Business ID" required><br>
+      <input type="password" id="password" placeholder="Password" required><br>
+      <input type="text" id="businessName" placeholder="Business Name" required><br>
+      <input type="email" id="businessEmail" placeholder="Business Email" required><br>
+      <select id="businessIndustry" required>
+        <option value="" disabled selected>Business Industry</option>
+        <option value="Retail">Retail</option>
+        <option value="Manufacturing">Manufacturing</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Technology">Technology</option>
+        <option value="Education">Education</option>
+      </select><br>
+      <input type="text" id="service1" placeholder="Service 1" required><br>
+      <input type="text" id="service2" placeholder="Service 2" required><br>
+      <input type="text" id="service3" placeholder="Service 3" required><br>
+      <button type="button" onclick="registerUser()">Register</button>
+      <div id="response"></div>
+      <a id="redirectLink" href="#" style="display:none;"></a>
+    </form>
+  </body>
+</html>
